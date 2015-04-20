@@ -2,58 +2,48 @@
 import wx
 import time
 
-# 円周率小数点以下
+N = 10000
+
+# 円柱率小数点以下の算出
 def ppii(n) :
-  a , b , i = 10 ** n , 10 ** n , n * 8 + 1
-  while i >= 3 :
-      a , i = (a + b + b ) * ( i / 2 ) / i , i - 2
-  return a - b
+	a , b , i = 10 ** n , 10 ** n , n * 8 + 1
+	while i >= 3 :
+		a , i = (a + b + b ) * (i / 2) / i , i - 2
+	return a - b
 
-# CUI表示テキスト
-#print "3."+str(ppii(100))
+# アプリケーションの初期化
+app = wx.App()
 
-if __name__ == "__main__":
-    # アプリケーションの初期化
-    application = wx.App()
+# フレームの初期化
+frame = wx.Frame(None , -1 , 'superπをwxPythonで作ってみる')
 
-    # フレームの初期化
-    frame = wx.Frame(None,wx.ID_ANY,"superπをwxPythonで作ってみる")
+# パネル作成
+panel = wx.Panel(frame , -1)
 
-    # パネル作成
-    panel = wx.Panel(frame,wx.ID_ANY)
-    #panel.SetBackgroundColour("#AFAFAF")
+# ファイルへの書き出し
+start = time.time()
+f = open('result.txt' , 'w')
+f.write('3.\n' + str(ppii(N)) + '\n')
+f.close()
+elapsed_time = time.time() - start
 
-    # 計算結果をresultに格納する
-    start = time.time()
+# 計算結果をresultに格納
+#result = wx.TextCtrl(panel , -1 , ('3.' + str(ppii(1000)) + '\n'))
+result = wx.StaticText(panel , -1 , ('3.' + str(ppii(40)) + '...\n'))
 
-    result = wx.TextCtrl(panel , wx.ID_ANY , ("\n3." + str(ppii(1000)) + "\n"))
+# resultへの書き込みを拒否
+#result.Disable()
 
-    elapsed_time = time.time() - start
+st1 = wx.StaticText(panel , -1 , '\n\n' + str(N) + '桁の計算終了\n')
+res = wx.StaticText(panel , -1 , '\n\n\n' + str(elapsed_time * 100) + 'ミリ秒')
 
-    # resultへの書き込みを拒否
-    result.Disable()
+# レイアウト作成
+layout = wx.BoxSizer(wx.VERTICAL)
+panel.SetSizer(layout)
 
-    # resultの表示についてのフォント調整
-    result_font = wx.Font(14 , wx.FONTFAMILY_DEFAULT , wx.FONTSTYLE_NORMAL , wx.FONTWEIGHT_NORMAL)
-    result.SetFont(result_font)
+# ステータスバー作成
+frame.CreateStatusBar()
+frame.SetStatusText('super_pi.appと同ディレクトリ内に結果ファイルを出力しました。')
 
-
-    st1 = wx.StaticText(panel, -1 , "計算終了")
-    res = wx.StaticText(panel , -1 , "\n\n" + str(elapsed_time * 1000) + "ミリ秒")
-
-    # レイアウト作成
-    #layout = wx.BoxSizer(wx.VERTICAL)
-
-    #panel.SetSizer(layout)
-
-    # ステータスバー作成
-    frame.CreateStatusBar()
-    frame.SetStatusText("super_pi.appのディレクトリ内に結果ファイルを出力しました。")
-
-    frame.Show()
-    application.MainLoop()
-
-    # ファイルへの書き出し
-    f = open('result.txt' , 'w')
-    f.write("3.\n" + str(ppii(1000)) + "\n")
-    f.close()
+frame.Show()
+app.MainLoop()
